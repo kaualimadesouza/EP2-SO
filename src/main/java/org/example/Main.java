@@ -1,7 +1,18 @@
 package org.example;
 
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello and welcome!");
+        LeitorBD leitorBD = new LeitorBD("arquivos/bd.txt");
+        List<String> arranjoPalavras = leitorBD.carregarArranjos();
+
+        for (String palavra : arranjoPalavras) {
+            System.out.println(palavra);
+        }
+
+        System.out.println(arranjoPalavras.size());
+
+
     }
 }
