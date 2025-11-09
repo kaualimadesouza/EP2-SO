@@ -19,13 +19,16 @@ public class ReaderThread extends Thread {
         try {
             Random numeroAleatorio = new Random();
 
-            // Realizar leituras aleatórias na base de dados
+            // Realizar exatamente 100 leituras aleatórias na base de dados
             for (int i = 0; i < 100; i++) {
                 int posicaoAleatoriaLer = numeroAleatorio.nextInt(baseDados.getTamanhoBase());
                 String palavraLida = baseDados.read(posicaoAleatoriaLer);
                 this.setPalavraAtualLida(palavraLida);
                 System.out.println("Leitor leu a palavra: " + palavraLida + " na posição: " + posicaoAleatoriaLer);
             }
+
+            // Sleep por 1ms após os 100 acessos
+            Thread.sleep(1);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

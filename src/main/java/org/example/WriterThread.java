@@ -17,12 +17,15 @@ public class WriterThread extends Thread{
         try {
             Random numeroAleatorio = new Random();
 
-            // Realizar escritas aleatórias na base de dados
+            // Realizar exatamente 100 escritas aleatórias na base de dados
             for (int i = 0; i < 100; i++) {
                 int posicaoAleatoriaEscrever = numeroAleatorio.nextInt(baseDados.getTamanhoBase());
                 System.out.println("Escritor escreveu 'MODIFICADO' na posição: " + posicaoAleatoriaEscrever);
                 baseDados.write(posicaoAleatoriaEscrever, "MODIFICADO");
             }
+
+            // Sleep por 1ms após os 100 acessos (ainda dentro da região crítica)
+            Thread.sleep(1);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
