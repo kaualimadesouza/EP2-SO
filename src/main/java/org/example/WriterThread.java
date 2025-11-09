@@ -10,12 +10,14 @@ import java.util.Random;
  */
 public class WriterThread extends Thread{
     private BaseDados baseDados;
+    private Boolean ehImplementacaoReaderAndWriters;
 
     /**
      * Construtor da classe WriterThread.
      */
-    public WriterThread(BaseDados baseDados) {
+    public WriterThread(BaseDados baseDados, Boolean ehImplementacaoReaderAndWriters) {
         this.baseDados = baseDados;
+        this.ehImplementacaoReaderAndWriters = ehImplementacaoReaderAndWriters;
     }
 
     /**
@@ -23,26 +25,32 @@ public class WriterThread extends Thread{
      */
     @Override
     public void run() {
-        // Entrar na seção crítica de escrita
-        this.baseDados.entrarEscrita();
+        if (ehImplementacaoReaderAndWriters) {
+            // Entrar na seção crítica de escrita
+            this.baseDados.entrarEscritaReadersAndWriters();
 
-        try {
-            Random numeroAleatorio = new Random();
+            try {
+                Random numeroAleatorio = new Random();
 
-            // Realizar exatamente 100 escritas aleatórias na base de dados
-            for (int i = 0; i < 100; i++) {
-                int posicaoAleatoriaEscrever = numeroAleatorio.nextInt(baseDados.getTamanhoBase());
-                baseDados.write(posicaoAleatoriaEscrever, "MODIFICADO");
+                // Realizar exatamente 100 escritas aleatórias na base de dados
+                for (int i = 0; i < 100; i++) {
+                    int posicaoAleatoriaEscrever = numeroAleatorio.nextInt(baseDados.getTamanhoBase());
+                    baseDados.write(posicaoAleatoriaEscrever, "MODIFICADO");
+                }
+
+                // Sleep por 1ms após os 100 acessos (ainda dentro da região crítica)
+                Thread.sleep(1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                // Sair da seção crítica de escrita independentemente de sucesso ou falha
+                System.out.println("Thread " + Thread.currentThread().getId() + " terminou escrita.");
+                this.baseDados.sairEscritaReadersAndWriters();
             }
-
-            // Sleep por 1ms após os 100 acessos (ainda dentro da região crítica)
-            Thread.sleep(1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // Sair da seção crítica de escrita independentemente de sucesso ou falha
-            System.out.println("Thread " + Thread.currentThread().getId() + " terminou escrita.");
-            this.baseDados.sairEscrita();
         }
+        else {
+            // TODO: Implementar outra estratégia de escrita que nao seja Readers-Writers
+        }
+
     }
 }

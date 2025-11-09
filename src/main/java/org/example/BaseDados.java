@@ -27,14 +27,14 @@ public class BaseDados {
      * Adquire o lock de leitura para permitir acesso concorrente de múltiplos leitores.
      * Deve ser chamado antes de qualquer operação de leitura.
      */
-    public void entrarLeitura() {
+    public void entrarLeituraReadersAndWriters() {
         this.lockVariavel.readLock().lock();
     }
 
     /**
      * Libera o lock de leitura após completar operações de leitura.
      */
-    public void sairLeitura() {
+    public void sairLeituraReadersAndWriters() {
         this.lockVariavel.readLock().unlock();
     }
 
@@ -42,14 +42,14 @@ public class BaseDados {
      * Adquire o lock de escrita para acesso exclusivo de um único escritor.
      * Deve ser chamado antes de qualquer operação de escrita.
      */
-    public void entrarEscrita() {
+    public void entrarEscritaReadersAndWriters() {
         this.lockVariavel.writeLock().lock();
     }
 
     /**
      * Libera o lock de escrita após completar operações de escrita.
      */
-    public void sairEscrita() {
+    public void sairEscritaReadersAndWriters() {
         this.lockVariavel.writeLock().unlock();
     }
 

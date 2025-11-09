@@ -13,7 +13,7 @@ public class Main {
      * Inicializa e distribui aleatoriamente 100 threads no arranjo.
      * Cria ReaderThreads e WriterThreads de forma aleatória e os posiciona em posições aleatórias do arranjo de threads.
      */
-    public static List<Thread> inicializarThreads(BaseDados baseDados) {
+    public static List<Thread> inicializarThreads(BaseDados baseDados, Boolean ehImplementacaoReaderAndWriters) {
         List<Thread> threads = new ArrayList<Thread>();
 
         // Inicializar posicoes vazias
@@ -28,9 +28,9 @@ public class Main {
 
             Thread threadAleatoria;
             if (numeroAleatorio.nextBoolean()) {
-                threadAleatoria = new ReaderThread(baseDados);
+                threadAleatoria = new ReaderThread(baseDados, ehImplementacaoReaderAndWriters);
             } else {
-                threadAleatoria = new WriterThread(baseDados);
+                threadAleatoria = new WriterThread(baseDados, ehImplementacaoReaderAndWriters);
             }
 
             int posicaoAleatoria;
@@ -54,9 +54,10 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         LeitorBD leitorBD = new LeitorBD("arquivos/bd.txt");
         BaseDados baseDados = leitorBD.carregarArranjos();
+        Boolean ehImplementacaoReaderAndWriters = true;
 
         // Inicializar threads de leitura e escrita no arranjo de tamanho 100
-        List<Thread> arranjoThreads = inicializarThreads(baseDados);
+        List<Thread> arranjoThreads = inicializarThreads(baseDados, ehImplementacaoReaderAndWriters);
 
         if (arranjoThreads.size() != TAMANHO_ARRANJO_THREADS) {
             throw new RuntimeException("Erro ao inicializar o arranjo de threads.");
