@@ -1,16 +1,59 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class Main {
+    public static final int TAMANHO_ARRANJO_THREADS = 100;
+
+    public static List<Thread> inicializarThreads() {
+        List<Thread> threads = new ArrayList<Thread>();
+
+        // Inicializar posicoes vazias
+        HashMap<Integer, Boolean> posicoesValidas = new HashMap<Integer, Boolean>();
+        for (int i = 0; i < TAMANHO_ARRANJO_THREADS; i++) {
+            threads.add(null);
+            posicoesValidas.put(i, true);
+        }
+        
+        for (int i = 0; i < TAMANHO_ARRANJO_THREADS; i++) {
+            Random numeroAleatorio = new Random();
+
+            Thread threadAleatoria;
+            if (numeroAleatorio.nextBoolean()) {
+                threadAleatoria = new ReaderThread();
+            } else {
+                threadAleatoria = new WriterThread();
+            }
+
+            int posicaoAleatoria;
+            while(true) {
+                posicaoAleatoria = numeroAleatorio.nextInt(TAMANHO_ARRANJO_THREADS);
+                
+                if (posicoesValidas.get(posicaoAleatoria)) {
+                    // Adiciona Thread no arranjo
+                    threads.set(posicaoAleatoria, threadAleatoria);
+
+                    // Torna a posicao invalida
+                    posicoesValidas.put(posicaoAleatoria, false);
+                    break;
+                }
+            }
+        }
+        return threads;
+    }
+
     public static void main(String[] args) {
         LeitorBD leitorBD = new LeitorBD("arquivos/bd.txt");
-        List<String> arranjoPalavras = leitorBD.carregarArranjos();
+        BaseDados baseDados = leitorBD.carregarArranjos();
 
-        for (String palavra : arranjoPalavras) {
-            System.out.println(palavra);
+        // Inicializar threads de leitura e escrita no arranjo de tamanho 100
+        List<Thread> arranjoThreads = inicializarThreads();
+        for (Thread thread : arranjoThreads){
+            System.out.println(thread);
         }
-
-        System.out.println(arranjoPalavras.size());
+        System.out.println(arranjoThreads.size());
     }
 }

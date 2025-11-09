@@ -27,14 +27,15 @@ public class LeitorBD {
      *
      * @return uma lista contendo todas as linhas do arquivo como strings
      */
-    public List<String> carregarArranjos() {
+    public BaseDados carregarArranjos() {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(this.pathArquivo))) {
-            List<String> arranjoPalavras = new ArrayList<>();
+            BaseDados baseDados = new BaseDados();
             String linha;
             while ((linha = bufferedReader.readLine()) != null) {
-                arranjoPalavras.add(linha);
+                baseDados.addItemLista(linha);
             }
-            return arranjoPalavras;
+            baseDados
+            return baseDados;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
