@@ -5,55 +5,90 @@ import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * Implementa o padrão Readers-Writers usando ReentrantReadWriteLock para permitir múltiplos leitores simultâneos ou um único escritor por vez se bem implementado.
+ */
 public class BaseDados {
     private final List<String> palavras;
     private ReadWriteLock lockVariavel;
     private int tamanhoBase;
 
+    /**
+     * Construtor da classe BaseDados.
+     * Inicializa a lista de palavras, o lock de leitura/escrita e o tamanho da base.
+     */
     public BaseDados() {
         this.palavras = new ArrayList<String>();
         this.lockVariavel = new ReentrantReadWriteLock();
         this.tamanhoBase = 0;
     }
 
+    /**
+     * Adquire o lock de leitura para permitir acesso concorrente de múltiplos leitores.
+     * Deve ser chamado antes de qualquer operação de leitura.
+     */
     public void entrarLeitura() {
         this.lockVariavel.readLock().lock();
     }
 
+    /**
+     * Libera o lock de leitura após completar operações de leitura.
+     */
     public void sairLeitura() {
         this.lockVariavel.readLock().unlock();
     }
 
+    /**
+     * Adquire o lock de escrita para acesso exclusivo de um único escritor.
+     * Deve ser chamado antes de qualquer operação de escrita.
+     */
     public void entrarEscrita() {
         this.lockVariavel.writeLock().lock();
     }
 
+    /**
+     * Libera o lock de escrita após completar operações de escrita.
+     */
     public void sairEscrita() {
         this.lockVariavel.writeLock().unlock();
     }
 
-    // Leitura de palavras na lista
+    /**
+     * Lê uma palavra na posição especificada da base de dados.
+     */
     public String read(int index) {
         return this.palavras.get(index);
     }
 
-    // Escrita de palavras na lista
+    /**
+     * Escreve uma palavra na posição especificada da base de dados.
+     */
     public void write(int index, String value) {
         this.palavras.set(index, value);
     }
+
 
     public List<String> getPalavras() {
         return palavras;
     }
 
-    public synchronized void addItemLista(String palavra) {
+    /**
+     * Adiciona uma nova palavra à base de dados.
+     */
+    public void addItemLista(String palavra) {
         this.palavras.add(palavra);
     }
 
+    /**
+     * Obtém o tamanho total da base de dados.
+     */
     public int getTamanhoBase() {
         return tamanhoBase;
     }
 
+    /**
+     * Define o tamanho da base de dados.
+     */
     public void setTamanhoBase(int tamanho) {
         this.tamanhoBase = tamanho;
     }

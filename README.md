@@ -17,14 +17,13 @@ O projeto visa ilustrar a importância prática das soluções para o problema d
 
 ### ✅ Implementado
 - **BaseDados**: Estrutura compartilhada com `ReentrantReadWriteLock`
-- **LeitorBD**: Carrega arquivo `bd.txt` e inicializa base de dados
+- **LeitorBD**: Carrega arquivo `bd.txt` e inicializa base de dados  
 - **ReaderThread**: Thread de leitura que faz 100 acessos aleatórios + sleep 1ms
 - **WriterThread**: Thread de escrita que escreve "MODIFICADO" em 100 posições aleatórias + sleep 1ms
 - **Main**: Cria 100 threads aleatoriamente distribuídas e executa todas
+- **Sistema de medição de tempo**: Cronometra execução das threads com `System.currentTimeMillis()`
 
 ### 🚧 Pendente
-- Implementar versão com Readers-Writers
-- Sistema de medição de tempo de execução
 - Testes com diferentes proporções de leitores/escritores (0R/100W até 100R/0W)
 - Implementação sem Readers/Writers (exclusão mútua total)
 - Execução de 50 testes por proporção e coleta de estatísticas
@@ -91,10 +90,9 @@ Estrutura thread-safe usando `ReentrantReadWriteLock`:
 ## Próximas Etapas
 
 ### Funcionalidades Pendentes
-1. **Medição de tempo**: Implementar cronometragem das execuções com `System.currentTimeMillis()`
-2. **Proporções configuráveis**: Permitir especificar quantidade exata de leitores/escritores
-3. **Implementação sem Readers/Writers**: Versão com exclusão mútua total (`synchronized`)
-4. **Sistema de testes automatizado**: Executar 50 vezes cada proporção (0R/100W até 100R/0W)
+1. **Proporções configuráveis**: Permitir especificar quantidade exata de leitores/escritores
+2. **Implementação sem Readers/Writers**: Versão com exclusão mútua total (`synchronized`)
+3. **Sistema de testes automatizado**: Executar 50 vezes cada proporção (0R/100W até 100R/0W)
 
 ### Estrutura de Testes Planejada
 - **101 proporções**: 0R/100W, 1R/99W, 2R/98W, ..., 99R/1W, 100R/0W

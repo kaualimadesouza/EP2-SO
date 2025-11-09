@@ -5,9 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+
 public class Main {
     public static final int TAMANHO_ARRANJO_THREADS = 100;
 
+    /**
+     * Inicializa e distribui aleatoriamente 100 threads no arranjo.
+     * Cria ReaderThreads e WriterThreads de forma aleatória e os posiciona em posições aleatórias do arranjo de threads.
+     */
     public static List<Thread> inicializarThreads(BaseDados baseDados) {
         List<Thread> threads = new ArrayList<Thread>();
 
@@ -45,6 +50,7 @@ public class Main {
         return threads;
     }
 
+
     public static void main(String[] args) throws InterruptedException {
         LeitorBD leitorBD = new LeitorBD("arquivos/bd.txt");
         BaseDados baseDados = leitorBD.carregarArranjos();
@@ -56,6 +62,9 @@ public class Main {
             throw new RuntimeException("Erro ao inicializar o arranjo de threads.");
         }
 
+        // Marcar Tempo Início
+        long tempoInicio = System.currentTimeMillis();
+
         // Iniciar todas as threads
         for (Thread thread : arranjoThreads) {
             thread.start();
@@ -65,5 +74,15 @@ public class Main {
         for (Thread thread : arranjoThreads) {
             thread.join();
         }
+
+        // Marcar Tempo Final
+        long tempoFim = System.currentTimeMillis();
+        long tempoTotalExecucao = tempoFim - tempoInicio;
+
+
+
+        System.out.println("=== RESULTADO DA EXECUÇÃO ===");
+        System.out.println("Tempo total de execução: " + tempoTotalExecucao + " ms");
+        System.out.println("Número de threads executadas: " + TAMANHO_ARRANJO_THREADS);
     }
 }
