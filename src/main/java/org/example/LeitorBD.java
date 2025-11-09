@@ -31,10 +31,12 @@ public class LeitorBD {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(this.pathArquivo))) {
             BaseDados baseDados = new BaseDados();
             String linha;
+            int contadorLinhas = 0;
             while ((linha = bufferedReader.readLine()) != null) {
                 baseDados.addItemLista(linha);
+                contadorLinhas++;
             }
-            baseDados
+            baseDados.setTamanhoBase(contadorLinhas);
             return baseDados;
         } catch (IOException e) {
             throw new RuntimeException(e);

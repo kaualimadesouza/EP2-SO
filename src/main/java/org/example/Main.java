@@ -8,7 +8,7 @@ import java.util.Random;
 public class Main {
     public static final int TAMANHO_ARRANJO_THREADS = 100;
 
-    public static List<Thread> inicializarThreads() {
+    public static List<Thread> inicializarThreads(BaseDados baseDados) {
         List<Thread> threads = new ArrayList<Thread>();
 
         // Inicializar posicoes vazias
@@ -23,9 +23,9 @@ public class Main {
 
             Thread threadAleatoria;
             if (numeroAleatorio.nextBoolean()) {
-                threadAleatoria = new ReaderThread();
+                threadAleatoria = new ReaderThread(baseDados);
             } else {
-                threadAleatoria = new WriterThread();
+                threadAleatoria = new WriterThread(baseDados);
             }
 
             int posicaoAleatoria;
@@ -50,10 +50,12 @@ public class Main {
         BaseDados baseDados = leitorBD.carregarArranjos();
 
         // Inicializar threads de leitura e escrita no arranjo de tamanho 100
-        List<Thread> arranjoThreads = inicializarThreads();
+        List<Thread> arranjoThreads = inicializarThreads(baseDados);
         for (Thread thread : arranjoThreads){
             System.out.println(thread);
         }
         System.out.println(arranjoThreads.size());
+        Thread threadExemplo = arranjoThreads.getFirst();
+        threadExemplo.start();
     }
 }

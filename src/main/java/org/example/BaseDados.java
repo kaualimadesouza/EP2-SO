@@ -1,7 +1,6 @@
 package org.example;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -55,7 +54,7 @@ public class BaseDados {
         return tamanhoBase;
     }
 
-    public void setTamanhoBase() {
-        this.tamanhoBase = this.palavras.size();
+    public void setTamanhoBase(int tamanho) {
+        this.tamanhoBase = tamanho;
     }
 }
