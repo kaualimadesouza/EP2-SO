@@ -45,17 +45,25 @@ public class Main {
         return threads;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         LeitorBD leitorBD = new LeitorBD("arquivos/bd.txt");
         BaseDados baseDados = leitorBD.carregarArranjos();
 
         // Inicializar threads de leitura e escrita no arranjo de tamanho 100
         List<Thread> arranjoThreads = inicializarThreads(baseDados);
-        for (Thread thread : arranjoThreads){
-            System.out.println(thread);
+
+        if (arranjoThreads.size() != TAMANHO_ARRANJO_THREADS) {
+            throw new RuntimeException("Erro ao inicializar o arranjo de threads.");
         }
-        System.out.println(arranjoThreads.size());
-        Thread threadExemplo = arranjoThreads.getFirst();
-        threadExemplo.start();
+
+        // Iniciar todas as threads
+        for (Thread thread : arranjoThreads) {
+            thread.start();
+        }
+
+        // Esperar todas terminarem
+        for (Thread thread : arranjoThreads) {
+            thread.join();
+        }
     }
 }
