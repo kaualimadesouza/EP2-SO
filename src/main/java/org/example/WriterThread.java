@@ -49,8 +49,6 @@ public class WriterThread extends Thread{
             e.printStackTrace();
         } finally {
             // Sair da seção crítica de escrita independentemente de sucesso ou falha
-            System.out.println("Thread " + Thread.currentThread().getId() + " terminou escrita.");
-
             if (ehImplementacaoReaderAndWriters) {
                 this.baseDados.sairEscritaReadersAndWriters();
             }

@@ -41,7 +41,6 @@ public class ReaderThread extends Thread {
             for (int i = 0; i < 100; i++) {
                 int posicaoAleatoriaLer = numeroAleatorio.nextInt(baseDados.getTamanhoBase());
                 String palavraLida = baseDados.read(posicaoAleatoriaLer);
-                System.out.println("Thread " + Thread.currentThread().getId() + " leu: " + palavraLida);
                 this.setPalavraAtualLida(palavraLida);
             }
 
@@ -50,8 +49,7 @@ public class ReaderThread extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            // Sair da seção crítica de escrita independentemente de sucesso ou falha
-            System.out.println("Thread " + Thread.currentThread().getId() + " terminou leitura. Última palavra lida: " + this.getPalavraAtualLida());
+            // Sair da seção crítica de leitura independentemente de sucesso ou falha
             if (ehImplementacaoReaderAndWriters) {
                 this.baseDados.sairLeituraReadersAndWriters();
             }

@@ -3,8 +3,6 @@ package org.example;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Classe responsável por ler as palavras de arquivos de texto.
@@ -27,7 +25,7 @@ public class LeitorBD {
      *
      * @return uma lista contendo todas as linhas do arquivo como strings
      */
-    public BaseDados carregarArranjos() {
+    public BaseDados carregarArranjo() {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(this.pathArquivo))) {
             BaseDados baseDados = new BaseDados();
             String linha;
