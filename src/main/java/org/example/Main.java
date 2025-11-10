@@ -1,9 +1,6 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 
 public class Main {
@@ -52,9 +49,19 @@ public class Main {
 
 
     public static void main(String[] args) throws InterruptedException {
+        System.out.print("Escolhe o tipo de execução:\n1 - Implementação Readers and Writers\n2 - Implementação Sem Readers and Writers\nEscolha: ");
+        Scanner scanner = new Scanner(System.in);
+        int escolhaExecucao = scanner.nextInt();
+
+        while (escolhaExecucao != 1 && escolhaExecucao != 2) {
+            System.out.println("Escolha inválida. Por favor, escolha 1 ou 2:");
+            escolhaExecucao = scanner.nextInt();
+        }
+
+        boolean ehImplementacaoReaderAndWriters = escolhaExecucao == 1;
+
         LeitorBD leitorBD = new LeitorBD("arquivos/bd.txt");
         BaseDados baseDados = leitorBD.carregarArranjos();
-        Boolean ehImplementacaoReaderAndWriters = true;
 
         // Inicializar threads de leitura e escrita no arranjo de tamanho 100
         List<Thread> arranjoThreads = inicializarThreads(baseDados, ehImplementacaoReaderAndWriters);
