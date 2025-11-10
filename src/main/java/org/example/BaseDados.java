@@ -3,6 +3,7 @@ package org.example;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -10,7 +11,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class BaseDados {
     private final List<String> palavras;
-    private ReadWriteLock lockVariavel;
+
+    // Lock para o cado de Readers-Writers
+    private ReadWriteLock lockVariavelReadersAndWriters;
+
+    // Lock para o caso sem Readers-Writers
+    private ReentrantLock lockVariavelSemReadersAndWriters;
     private int tamanhoBase;
 
     /**
@@ -19,7 +25,8 @@ public class BaseDados {
      */
     public BaseDados() {
         this.palavras = new ArrayList<String>();
-        this.lockVariavel = new ReentrantReadWriteLock();
+        this.lockVariavelReadersAndWriters = new ReentrantReadWriteLock();
+        this.lockVariavelSemReadersAndWriters = new ReentrantLock();
         this.tamanhoBase = 0;
     }
 
@@ -28,14 +35,14 @@ public class BaseDados {
      * Deve ser chamado antes de qualquer operação de leitura.
      */
     public void entrarLeituraReadersAndWriters() {
-        this.lockVariavel.readLock().lock();
+        this.lockVariavelReadersAndWriters.readLock().lock();
     }
 
     /**
      * Libera o lock de leitura após completar operações de leitura.
      */
     public void sairLeituraReadersAndWriters() {
-        this.lockVariavel.readLock().unlock();
+        this.lockVariavelReadersAndWriters.readLock().unlock();
     }
 
     /**
@@ -43,14 +50,22 @@ public class BaseDados {
      * Deve ser chamado antes de qualquer operação de escrita.
      */
     public void entrarEscritaReadersAndWriters() {
-        this.lockVariavel.writeLock().lock();
+        this.lockVariavelReadersAndWriters.writeLock().lock();
     }
 
     /**
      * Libera o lock de escrita após completar operações de escrita.
      */
     public void sairEscritaReadersAndWriters() {
-        this.lockVariavel.writeLock().unlock();
+        this.lockVariavelReadersAndWriters.writeLock().unlock();
+    }
+
+    public void entrarRegiaoCriticaSemReadersAndWriters() {
+        this.lockVariavelSemReadersAndWriters.lock();
+    }
+
+    public void sairRegiaoCriticaSemReadersAndWriters() {
+        this.lockVariavelSemReadersAndWriters.unlock();
     }
 
     /**

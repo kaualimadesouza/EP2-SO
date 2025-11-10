@@ -26,33 +26,38 @@ public class ReaderThread extends Thread {
      */
     @Override
     public void run() {
+        // Entrar na seção crítica de leitura dependendo da implementação escolhida
         if (ehImplementacaoReaderAndWriters) {
-            // Entrar na seção crítica de leitura
             this.baseDados.entrarLeituraReadersAndWriters();
-
-            try {
-                Random numeroAleatorio = new Random();
-
-                // Realizar exatamente 100 leituras aleatórias na base de dados
-                for (int i = 0; i < 100; i++) {
-                    int posicaoAleatoriaLer = numeroAleatorio.nextInt(baseDados.getTamanhoBase());
-                    String palavraLida = baseDados.read(posicaoAleatoriaLer);
-                    System.out.println("Thread " + Thread.currentThread().getId() + " leu: " + palavraLida);
-                    this.setPalavraAtualLida(palavraLida);
-                }
-
-                // Sleep por 1ms após os 100 acessos
-                Thread.sleep(1);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                // Sair da seção crítica de escrita independentemente de sucesso ou falha
-                System.out.println("Thread " + Thread.currentThread().getId() + " terminou leitura. Última palavra lida: " + this.getPalavraAtualLida());
-                this.baseDados.sairLeituraReadersAndWriters();
-            }
         }
         else {
-            // TODO: Implementar outra estratégia de leitura que nao seja Readers-Writers
+            this.baseDados.entrarRegiaoCriticaSemReadersAndWriters();
+        }
+
+        try {
+            Random numeroAleatorio = new Random();
+
+            // Realizar exatamente 100 leituras aleatórias na base de dados
+            for (int i = 0; i < 100; i++) {
+                int posicaoAleatoriaLer = numeroAleatorio.nextInt(baseDados.getTamanhoBase());
+                String palavraLida = baseDados.read(posicaoAleatoriaLer);
+                System.out.println("Thread " + Thread.currentThread().getId() + " leu: " + palavraLida);
+                this.setPalavraAtualLida(palavraLida);
+            }
+
+            // Sleep por 1ms após os 100 acessos
+            Thread.sleep(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Sair da seção crítica de escrita independentemente de sucesso ou falha
+            System.out.println("Thread " + Thread.currentThread().getId() + " terminou leitura. Última palavra lida: " + this.getPalavraAtualLida());
+            if (ehImplementacaoReaderAndWriters) {
+                this.baseDados.sairLeituraReadersAndWriters();
+            }
+            else {
+                this.baseDados.sairRegiaoCriticaSemReadersAndWriters();
+            }
         }
     }
 

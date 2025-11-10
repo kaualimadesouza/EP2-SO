@@ -26,8 +26,14 @@ public class WriterThread extends Thread{
     @Override
     public void run() {
         if (ehImplementacaoReaderAndWriters) {
-            // Entrar na seção crítica de escrita
-            this.baseDados.entrarEscritaReadersAndWriters();
+            // Entrar na seção crítica de escrita dependendo da implementação escolhida
+            if (ehImplementacaoReaderAndWriters) {
+                this.baseDados.entrarEscritaReadersAndWriters();
+            }
+            else {
+                this.baseDados.entrarRegiaoCriticaSemReadersAndWriters();
+            }
+
 
             try {
                 Random numeroAleatorio = new Random();
@@ -45,12 +51,14 @@ public class WriterThread extends Thread{
             } finally {
                 // Sair da seção crítica de escrita independentemente de sucesso ou falha
                 System.out.println("Thread " + Thread.currentThread().getId() + " terminou escrita.");
-                this.baseDados.sairEscritaReadersAndWriters();
+
+                if (ehImplementacaoReaderAndWriters) {
+                    this.baseDados.sairEscritaReadersAndWriters();
+                }
+                else {
+                    this.baseDados.sairRegiaoCriticaSemReadersAndWriters();
+                }
             }
         }
-        else {
-            // TODO: Implementar outra estratégia de escrita que nao seja Readers-Writers
-        }
-
     }
 }
