@@ -33,7 +33,6 @@ public class WriterThread extends Thread{
             this.baseDados.entrarRegiaoCriticaSemReadersAndWriters();
         }
 
-
         try {
             Random numeroAleatorio = new Random();
 

@@ -26,10 +26,13 @@ public class LeitorBD {
      * @return uma lista contendo todas as linhas do arquivo como strings
      */
     public BaseDados carregarArranjo() {
+        // Usar try catch para ler o arquivo e depois fechar o BufferedReader automaticamente
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(this.pathArquivo))) {
             BaseDados baseDados = new BaseDados();
             String linha;
             int contadorLinhas = 0;
+
+            // Ler cada linha do arquivo e adicionar à lista
             while ((linha = bufferedReader.readLine()) != null) {
                 baseDados.addItemLista(linha);
                 contadorLinhas++;

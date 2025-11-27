@@ -2,7 +2,7 @@
 
 ## Descrição do Projeto
 
-Este é o segundo exercício-programa da disciplina de Sistemas Operacionais que tem como objetivo implementar e avaliar soluções para o problema clássico de **Leitores e Escritores** usando threads em Java.
+Este é o segundo exercício-programa da disciplina de Sistemas Operacionais que implementa e avalia soluções para o problema clássico de **Leitores e Escritores** usando threads em Java.
 
 ## Objetivo
 
@@ -13,20 +13,17 @@ O projeto visa ilustrar a importância prática das soluções para o problema d
 3. Comparação de desempenho entre implementações com e sem controle de Readers/Writers
 4. Análise de diferentes proporções de leitores e escritores
 
-## Estado Atual da Implementação
+## Implementação Completa
 
 ### ✅ Implementado
-- **BaseDados**: Estrutura compartilhada com `ReentrantReadWriteLock`
+- **BaseDados**: Estrutura compartilhada com `ReentrantReadWriteLock` e `ReentrantLock` para ambas as implementações
 - **LeitorBD**: Carrega arquivo `bd.txt` e inicializa base de dados  
 - **ReaderThread**: Thread de leitura que faz 100 acessos aleatórios + sleep 1ms
 - **WriterThread**: Thread de escrita que escreve "MODIFICADO" em 100 posições aleatórias + sleep 1ms
-- **Main**: Cria 100 threads aleatoriamente distribuídas e executa todas
+- **Main**: Cria 100 threads com proporções variadas (de 0R/100W a 100R/0W), executa 50 vezes cada proporção e salva resultados em CSV
 - **Sistema de medição de tempo**: Cronometra execução das threads com `System.currentTimeMillis()`
-
-### 🚧 Pendente
-- Testes com diferentes proporções de leitores/escritores (0R/100W até 100R/0W)
-- Implementação sem Readers/Writers (exclusão mútua total)
-- Execução de 50 testes por proporção e coleta de estatísticas
+- **Implementação sem Readers/Writers**: Usa exclusão mútua total com `ReentrantLock`
+- **Testes automatizados**: 101 proporções, 50 execuções cada, coleta de estatísticas
 
 ## Estrutura do Projeto
 
@@ -41,6 +38,9 @@ EP2_SO/
 ├── arquivos/
 │   ├── bd.txt                 # Texto "A Treatise Concerning the Principles of Human Knowledge" (George Berkeley, 1710)
 │   └── ep02.pdf               # Especificação completa do exercício
+├── resultados/
+│   ├── resultados_readers_and_writers.csv    # Resultados com implementação Readers/Writers
+│   └── resultados_sem_readers_and_writers.csv # Resultados sem implementação Readers/Writers
 ├── pom.xml                    # Configuração Maven
 └── README.md                  # Este arquivo
 ```
@@ -52,90 +52,53 @@ O projeto utiliza o texto filosófico **"A Treatise Concerning the Principles of
 - Total de 36.242 linhas
 - Pontuação satélite incluída
 
-## Implementação Atual
+## Implementação Detalhada
 
 ### 1. BaseDados
-Estrutura thread-safe usando `ReentrantReadWriteLock`:
-- **Lista de 36.242 palavras** carregada do arquivo `bd.txt`
-- **Métodos de controle**: `entrarLeitura()`, `sairLeitura()`, `entrarEscrita()`, `sairEscrita()`
-- **Operações de acesso**: `read(int index)` e `write(int index, String value)`
-- **Política**: Múltiplos leitores simultâneos, escritores exclusivos
+Estrutura thread-safe com duas opções:
+- **Com Readers/Writers**: Usa `ReentrantReadWriteLock` para múltiplos leitores simultâneos e escritores exclusivos
+- **Sem Readers/Writers**: Usa `ReentrantLock` para exclusão mútua total
+- **Operações**: `read(int index)` e `write(int index, String value)`
 
 ### 2. Sistema de Threads
-- **100 threads** criadas e distribuídas aleatoriamente no arranjo
-- **Distribuição aleatória** de `ReaderThread` e `WriterThread` (50/50 aproximadamente)
+- **100 threads** por execução, distribuídas conforme proporção especificada
+- **Proporções testadas**: 0R/100W, 1R/99W, ..., 99R/1W, 100R/0W (101 combinações)
 - **Execução sequencial**: Todas as threads são iniciadas e aguardadas com `join()`
 
-### 3. Comportamento das Threads Implementado
+### 3. Comportamento das Threads
 - **ReaderThread**: 
-  - Adquire `readLock()` 
+  - Adquire lock apropriado (readLock ou mutex)
   - Executa 100 leituras de posições aleatórias
-  - Armazena palavra lida em variável local
-  - Sleep de 1ms após os 100 acessos (ainda dentro da região crítica)
+  - Sleep de 1ms após os 100 acessos (dentro da região crítica)
   - Libera lock no bloco `finally`
 
 - **WriterThread**:
-  - Adquire `writeLock()`
+  - Adquire lock apropriado (writeLock ou mutex)
   - Executa 100 escritas de "MODIFICADO" em posições aleatórias  
-  - Sleep de 1ms após os 100 acessos (ainda dentro da região crítica)
+  - Sleep de 1ms após os 100 acessos (dentro da região crítica)
   - Libera lock no bloco `finally`
 
-
-### 4. Política de Concorrência Atual
-- **Readers/Writers implementado** com `ReentrantReadWriteLock`
-- **Múltiplos leitores** podem executar simultaneamente
-- **Escritores têm acesso exclusivo** (não executam com leitores ou outros escritores)
-- **Prioridade aos leitores** (padrão do `ReentrantReadWriteLock`)
-
-## Próximas Etapas
-
-### Funcionalidades Pendentes
-1. **Proporções configuráveis**: Permitir especificar quantidade exata de leitores/escritores
-2. **Implementação sem Readers/Writers**: Versão com exclusão mútua total (`synchronized`)
-3. **Sistema de testes automatizado**: Executar 50 vezes cada proporção (0R/100W até 100R/0W)
-
-### Estrutura de Testes Planejada
-- **101 proporções**: 0R/100W, 1R/99W, 2R/98W, ..., 99R/1W, 100R/0W
-- **50 execuções por proporção**
-- **Medição**: Tempo entre fim da criação das threads e término da última thread
-- **Comparação**: Implementação com vs sem Readers/Writers
+### 4. Política de Concorrência
+- **Com Readers/Writers**: Múltiplos leitores simultâneos, escritores exclusivos, prioridade aos leitores
+- **Sem Readers/Writers**: Exclusão mútua total (apenas uma thread por vez)
 
 ## Como Executar
 
-### Pré-requisitos
-- Java 24+
-- Maven
+1. Certifique-se de ter o Maven instalado.
+2. Compile o projeto: `mvn compile`
+3. Execute a classe principal: `mvn exec:java -Dexec.mainClass="org.example.Main"`
+4. Escolha a implementação:
+   - 1: Com Readers and Writers
+   - 2: Sem Readers and Writers
+5. Aguarde a execução completa (pode levar alguns minutos devido às 50 execuções por proporção).
+6. Verifique os resultados nos arquivos CSV em `resultados/`.
 
-### Execução
-```bash
-mvn compile exec:java -Dexec.mainClass="org.example.Main"
-```
+## Resultados
 
-## Classes Implementadas
+Os arquivos CSV contêm:
+- `NumReaders`: Número de threads de leitura
+- `NumWriters`: Número de threads de escrita
+- `TempoMedio(ms)`: Tempo médio das 50 execuções
+- `TempoTotal(ms)`: Tempo total das 50 execuções
 
-### BaseDados
-Estrutura de dados thread-safe:
-- `entrarLeitura()` / `sairLeitura()`: Controle de acesso para leitores
-- `entrarEscrita()` / `sairEscrita()`: Controle de acesso para escritores  
-- `read(int index)`: Lê palavra na posição especificada
-- `write(int index, String value)`: Escreve palavra na posição especificada
-- `addItemLista(String palavra)`: Adiciona palavra na inicialização (thread-safe)
-
-### LeitorBD
-Carrega arquivo de texto:
-- **Construtor**: Recebe caminho do arquivo
-- **`carregarArranjos()`**: Retorna `BaseDados` inicializada com todas as palavras
-- **Funcionalidade**: Lê arquivo linha por linha e popula a estrutura
-
-### ReaderThread / WriterThread
-Threads que implementam o padrão Reader/Writer:
-- **100 acessos aleatórios** cada thread
-- **Região crítica**: Todo o processo de acessos ocorre dentro do lock
-- **Tratamento de exceções**: Lock liberado no `finally`
-
-### Main
-- Inicializa `BaseDados` carregando arquivo `bd.txt`
-- Cria 100 threads com distribuição aleatória de tipos
-- Popula arranjo de threads em posições aleatórias
-- Executa todas as threads e aguarda conclusão com `join()`
-
+Use esses dados para comparar o desempenho entre as implementações.

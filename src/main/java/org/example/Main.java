@@ -24,10 +24,14 @@ public class Main {
         int contReaders = 0;
         int contWriters = 0;
 
+        // Preencher arranjo com threads de forma aleatória
         for (int i = 0; i < TAMANHO_ARRANJO_THREADS; i++) {
             Random numeroAleatorio = new Random();
 
             Thread thread = null;
+
+            // Primeiro vai adicionando leitores até atingir o número máximo
+            // Depois vai adicionando escritores até atingir o número máximo
             if (contReaders < numReaders) {
                 thread = new ReaderThread(baseDados, ehImplementacaoReaderAndWriters);
                 contReaders++;
@@ -36,6 +40,7 @@ public class Main {
                 contWriters++;
             }
 
+            // Escolher posição aleatória válida no arranjo
             int posicaoAleatoria;
             while(true) {
                 posicaoAleatoria = numeroAleatorio.nextInt(TAMANHO_ARRANJO_THREADS);
@@ -58,8 +63,11 @@ public class Main {
     public static void main(String[] args) throws InterruptedException, IOException {
         System.out.print("Escolhe o tipo de execução:\n1 - Implementação Readers and Writers\n2 - Implementação Sem Readers and Writers\nEscolha: ");
         Scanner scanner = new Scanner(System.in);
+
+        // Esperar escolha válida do usuário
         int escolhaExecucao = scanner.nextInt();
 
+        // Enquanto a escolha for inválida, pedir nova escolha
         while (escolhaExecucao != 1 && escolhaExecucao != 2) {
             System.out.println("Escolha inválida. Por favor, escolha 1 ou 2:");
             escolhaExecucao = scanner.nextInt();
@@ -67,10 +75,12 @@ public class Main {
 
         boolean ehImplementacaoReaderAndWriters = escolhaExecucao == 1;
 
+        // Carregar base de dados a partir do arquivo
         LeitorBD leitorBD = new LeitorBD("arquivos/bd.txt");
         BaseDados baseDados = leitorBD.carregarArranjo();
 
         // Preparar arquivo CSV para salvar resultados
+        // Muda o nome do arquivo conforme a implementação escolhida
         String nomeArquivoCSV = ehImplementacaoReaderAndWriters ?
             "resultados/resultados_readers_and_writers.csv" :
             "resultados/resultados_sem_readers_and_writers.csv";
@@ -78,23 +88,28 @@ public class Main {
         BufferedWriter csvWriter = new BufferedWriter(new FileWriter(nomeArquivoCSV));
         csvWriter.write("NumReaders,NumWriters,TempoMedio(ms),TempoTotal(ms)\n");
 
+        // Loop para fazer a execução 100 vezes
         for (int i = 0, j = 100; i <= 100 && j >= 0; i++, j--) {
+            // Inicializar variáveis de tempo
             double tempoInicio = 0.0;
             double tempoFim = 0.0;
             double tempoTotal50Execucoes = 0.0;
 
+            // Executar 50 vezes o mesmo uma implemntação escolhida com i leitores e j escritores
             for (int k = 0; k < 50; k++) {
+                //  Definir número de leitores e escritores para facil leitura didatica
                 int numReaders = i;
                 int numWriters = j;
 
                 // Inicializar threads de leitura e escrita no arranjo de tamanho 100
                 List<Thread> arranjoThreads = inicializarThreads(baseDados, ehImplementacaoReaderAndWriters, numReaders, numWriters);
 
+                // Se o arranjo não foi populado corretamente, lançar exceção
                 if (arranjoThreads.size() != TAMANHO_ARRANJO_THREADS) {
                     throw new RuntimeException("Erro ao inicializar o arranjo de threads.");
                 }
 
-                // INÍCIO DA MEDIÇÃO: após povoamento do arranjo, antes de iniciar threads
+                // Inicio da medição de tempo
                 tempoInicio = System.currentTimeMillis();
 
                 // Iniciar todas as threads
@@ -102,27 +117,22 @@ public class Main {
                     thread.start();
                 }
 
-                // Esperar todas terminarem
+                // Esperar todas terminarem para depois finalizar a thread principal
                 for (Thread thread : arranjoThreads) {
                     thread.join();
                 }
 
-                // FIM DA MEDIÇÃO: após término da última thread
+                // Fim da medição de tempo
                 tempoFim = System.currentTimeMillis();
 
+                // Acumular tempo total das 50 execuções
                 tempoTotal50Execucoes += (tempoFim - tempoInicio);
-            }
-            String nomeArquivoTXT = "";
-            if (ehImplementacaoReaderAndWriters) {
-                nomeArquivoTXT = "resultados/output_readers_and_writers_%s_%s.txt".formatted(i, j);
-            } else {
-                nomeArquivoTXT = "resultados/output_sem_readers_and_writers_%s_%s.txt".formatted(i, j);
             }
 
             // Calcular tempo médio no final de 50 execucoes
             double tempoMedio = tempoTotal50Execucoes / 50.0;
 
-            // Salvar dados em arquivo CSV
+            // Salvar dados em arquivo CSV, cada linha representa as 50 execuções com i leitores e j escritores
             csvWriter.write(String.format("%d,%d,%.6f,%.6f\n", i, j, tempoMedio, tempoTotal50Execucoes));
         }
         
